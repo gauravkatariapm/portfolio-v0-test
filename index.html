@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gaurav — Product Manager & AI Researcher</title>
+<title>Gaurav</title>
+<!-- Favicon generated with rounded corners via JS below -->
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  /* Light theme (default) */
   :root {
     --bg: #f5f5f5;
     --text: #0a0a0a;
@@ -17,7 +17,6 @@
     --image-bg: #ffffff;
   }
 
-  /* Dark theme */
   [data-theme="dark"] {
     --bg: #0a0a0a;
     --text: #f5f5f5;
@@ -52,7 +51,6 @@
     gap: 80px;
   }
 
-  /* Heavier, larger heading to match reference */
   .intro h1 {
     font-size: 44px;
     font-weight: 700;
@@ -89,7 +87,6 @@
     transition: background-color 0.2s ease;
   }
 
-  /* Theme toggle - bottom left */
   .theme-toggle {
     position: fixed;
     bottom: 24px;
@@ -109,23 +106,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.15s ease, background-color 0.15s ease;
+    transition: color 0.15s ease;
   }
 
-  .theme-toggle button:hover {
-    color: var(--icon-hover);
-  }
+  .theme-toggle button:hover { color: var(--icon-hover); }
+  .theme-toggle button.active { color: var(--text); }
+  .theme-toggle svg { width: 16px; height: 16px; }
 
-  .theme-toggle button.active {
-    color: var(--text);
-  }
-
-  .theme-toggle svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  /* Footer links - bottom right */
   .footer {
     position: fixed;
     bottom: 24px;
@@ -133,7 +120,6 @@
     display: flex;
     gap: 20px;
     font-size: 14px;
-    color: var(--muted);
   }
 
   .footer a {
@@ -146,10 +132,7 @@
 
   @media (max-width: 900px) {
     body { padding: 24px; padding-bottom: 80px; }
-    .container {
-      grid-template-columns: 1fr;
-      gap: 40px;
-    }
+    .container { grid-template-columns: 1fr; gap: 40px; }
     .intro h1 { font-size: 32px; }
     .intro p { font-size: 20px; }
     .profile-img { width: 320px; height: 320px; }
@@ -166,11 +149,10 @@
     </section>
 
     <section class="image-wrapper">
-      <img src="profile.jpg" alt="Gaurav" class="profile-img" />
+      <img src="profile.jpg" alt="Gaurav" class="profile-img" id="profileImg" />
     </section>
   </main>
 
-  <!-- Theme toggle: system / light / dark -->
   <div class="theme-toggle" role="group" aria-label="Theme">
     <button id="theme-system" aria-label="System theme" title="System">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -206,6 +188,43 @@
   </footer>
 
   <script>
+    // ── Rounded favicon from profile.jpg ──
+    function setRoundedFavicon(src) {
+      const size = 64;
+      const radius = 16;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        ctx.clearRect(0, 0, size, size);
+        // Rounded rect clip
+        ctx.beginPath();
+        ctx.moveTo(radius, 0);
+        ctx.lineTo(size - radius, 0);
+        ctx.quadraticCurveTo(size, 0, size, radius);
+        ctx.lineTo(size, size - radius);
+        ctx.quadraticCurveTo(size, size, size - radius, size);
+        ctx.lineTo(radius, size);
+        ctx.quadraticCurveTo(0, size, 0, size - radius);
+        ctx.lineTo(0, radius);
+        ctx.quadraticCurveTo(0, 0, radius, 0);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(img, 0, 0, size, size);
+        // Set favicon
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+        link.href = canvas.toDataURL('image/png');
+      };
+      img.src = src;
+    }
+
+    window.addEventListener('load', () => setRoundedFavicon('profile.jpg'));
+
+    // ── Theme toggle ──
     const root = document.documentElement;
     const buttons = {
       system: document.getElementById('theme-system'),
@@ -215,23 +234,15 @@
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     function applyTheme(mode) {
-      if (mode === 'system') {
-        root.setAttribute('data-theme', mediaQuery.matches ? 'dark' : 'light');
-      } else {
-        root.setAttribute('data-theme', mode);
-      }
-      Object.entries(buttons).forEach(([key, btn]) => {
-        btn.classList.toggle('active', key === mode);
-      });
+      root.setAttribute('data-theme', mode === 'system' ? (mediaQuery.matches ? 'dark' : 'light') : mode);
+      Object.entries(buttons).forEach(([key, btn]) => btn.classList.toggle('active', key === mode));
       try { localStorage.setItem('theme', mode); } catch (e) {}
     }
 
-    // Init from saved preference or default to system
     let saved = 'system';
     try { saved = localStorage.getItem('theme') || 'system'; } catch (e) {}
     applyTheme(saved);
 
-    // React to system changes if in system mode
     mediaQuery.addEventListener('change', () => {
       let current = 'system';
       try { current = localStorage.getItem('theme') || 'system'; } catch (e) {}
