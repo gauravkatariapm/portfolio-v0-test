@@ -30,7 +30,7 @@
 
   .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1100px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
@@ -60,12 +60,15 @@
   }
 
   .profile-img {
-    width: 100%;
-    max-width: 520px;
-    aspect-ratio: 1 / 1;
+    width: 400px;
+    height: 400px;
     object-fit: cover;
     border-radius: 16px;
     display: block;
+    /* Keep pixel art crisp instead of blurry when scaled */
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
   }
 
   .footer {
@@ -94,7 +97,7 @@
     }
     .intro h1 { font-size: 26px; }
     .intro p { font-size: 18px; }
-    .profile-img { max-width: 400px; }
+    .profile-img { width: 320px; height: 320px; }
     .footer {
       position: static;
       justify-content: center;
