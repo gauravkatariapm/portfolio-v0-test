@@ -13,16 +13,26 @@
     --muted: #6e6e6e;
     --icon: #b0b0b0;
     --icon-hover: #0a0a0a;
-    --image-bg: #ffffff;
+    --glass-bg: rgba(255,255,255,0.95);
+    --glass-border: rgba(255,255,255,1);
+    --glass-shadow: 0 2px 12px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+    --play-bg: rgba(0,0,0,0.06);
+    --play-hover-bg: rgba(0,0,0,0.1);
+    --sub-border: rgba(0,0,0,0.12);
   }
 
   [data-theme="dark"] {
     --bg: #0a0a0a;
     --text: #f5f5f5;
-    --muted: #a0a0a0;
-    --icon: #6e6e6e;
+    --muted: #777;
+    --icon: #555;
     --icon-hover: #f5f5f5;
-    --image-bg: #1a1a1a;
+    --glass-bg: rgba(255,255,255,0.09);
+    --glass-border: rgba(255,255,255,0.14);
+    --glass-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
+    --play-bg: rgba(255,255,255,0.08);
+    --play-hover-bg: rgba(255,255,255,0.14);
+    --sub-border: rgba(255,255,255,0.12);
   }
 
   html, body { height: 100%; }
@@ -32,52 +42,174 @@
     background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
     transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  /* ── Two-column layout ── */
   .layout {
     display: grid;
-    grid-template-columns: 380px 1fr;
+    grid-template-columns: 440px 1fr;
     min-height: 100vh;
   }
 
-  /* ── Left panel ── */
   .left {
     padding: 48px 40px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
   }
 
-  .intro {
-    margin-top: 60px;
-  }
+  .intro { margin-bottom: 40px; }
 
   .intro h1 {
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.6px;
     line-height: 1.2;
     margin-bottom: 6px;
-    color: var(--text);
   }
 
   .intro p {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 400;
     color: var(--muted);
     line-height: 1.4;
     letter-spacing: -0.3px;
   }
 
-  /* ── Right panel (empty for now) ── */
-  .right {
-    position: relative;
+  /* ── Project list ── */
+  .projects {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
 
-  /* ── Profile chip — top right ── */
+  /* Each project is a wrapper so sub-items can live inside */
+  .project-entry { display: flex; flex-direction: column; }
+
+  .project-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .project-item.active {
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* Dark mode: elevated card is lighter surface */
+  [data-theme="dark"] .project-item.active {
+    background: #1c1c1c;
+    border-color: rgba(255,255,255,0.08);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+
+  .project-item:hover:not(.active) { color: var(--text); }
+
+  /* Badge — Play or WIP */
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: var(--play-bg);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    opacity: 0;
+    transition: opacity 0.2s ease, background 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+  }
+
+  .badge svg { width: 8px; height: 8px; flex-shrink: 0; }
+  .badge:hover { background: var(--play-hover-bg); color: var(--text); }
+
+  .project-item.active .badge,
+  .project-item:hover .badge { opacity: 1; }
+
+  /* ── Sub-items (Obsidian tree style) ── */
+  .sub-items {
+    display: none;
+    flex-direction: column;
+    margin-top: 8px;
+    margin-left: 26px;
+    padding-left: 14px;
+    border-left: 1.5px solid var(--sub-border);
+    gap: 2px;
+    margin-bottom: 8px;
+  }
+
+  .sub-items.open { display: flex; }
+
+  .sub-item {
+    display: flex;
+    align-items: center;
+    padding: 9px 10px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: color 0.15s ease, background 0.15s ease;
+    letter-spacing: -0.1px;
+  }
+
+  .sub-item:hover {
+    color: var(--text);
+    background: rgba(0,0,0,0.04);
+  }
+
+  [data-theme="dark"] .sub-item:hover {
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.85);
+  }
+
+  .project-entry.expanded .project-item.active {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+
+  .sub-item.active {
+    color: var(--text);
+    background: rgba(0,0,0,0.04);
+  }
+
+  [data-theme="dark"] .sub-item.active {
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.85);
+  }
+
+  .sub-item .sub-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 7px;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  /* ── Right panel ── */
+  .right { position: relative; }
+
+  /* ── Profile chip ── */
   .profile-chip {
     position: fixed;
     top: 22px;
@@ -87,15 +219,11 @@
     gap: 6px;
   }
 
-  .profile-chip span {
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--muted);
-  }
+  .profile-chip span { font-size: 13px; font-weight: 400; color: var(--muted); }
 
   .profile-chip img {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     object-fit: cover;
     image-rendering: pixelated;
@@ -104,7 +232,7 @@
     border: 1px solid rgba(128,128,128,0.2);
   }
 
-  /* ── Footer — bottom right ── */
+  /* ── Footer ── */
   .footer {
     position: fixed;
     bottom: 22px;
@@ -114,12 +242,14 @@
     gap: 16px;
   }
 
+  .footer-links { display: none; }
+
   .theme-toggle {
     display: flex;
     gap: 2px;
     align-items: center;
-    border-right: 1px solid rgba(128,128,128,0.25);
-    padding-right: 14px;
+    border-left: 1px solid rgba(128,128,128,0.25);
+    padding-left: 14px;
   }
 
   .theme-toggle button {
@@ -147,31 +277,173 @@
   }
 
   .footer a:hover { color: var(--text); }
+
+  /* ── Profile overlay ── */
+  .profile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .profile-overlay.open {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .profile-content {
+    width: 100%;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 80px;
+  }
+
+  .profile-text h2 {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .profile-text p {
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--muted);
+    line-height: 1.65;
+    letter-spacing: -0.2px;
+  }
+
+  .profile-image-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .profile-image-wrap img {
+    width: 380px;
+    height: 380px;
+    object-fit: cover;
+    border-radius: 50%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    background: var(--image-bg, #fff);
+  }
+
+  .profile-back {
+    position: fixed;
+    top: 22px;
+    left: 28px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s ease;
+    padding: 4px 0;
+  }
+
+  .profile-back:hover { color: var(--text); }
+
+  @media (max-width: 700px) {
+    .profile-content { grid-template-columns: 1fr; gap: 32px; }
+    .profile-image-wrap img { width: 260px; height: 260px; }
+    .profile-text h2 { font-size: 26px; }
+    .profile-text p { font-size: 15px; }
+  }
 </style>
 </head>
 <body>
 
-  <!-- Profile chip — top right -->
-  <div class="profile-chip">
-    <span>Profile</span>
+  <!-- Profile overlay -->
+  <div class="profile-overlay" id="profileOverlay">
+    <button class="profile-back" id="profileBack">← Back</button>
+    <div class="profile-content">
+      <div class="profile-text">
+        <h2>Gaurav</h2>
+        <p>I'm a Full Stack Product Manager with 3+ years of experience at a B2B startup with a background in AI research as well. I've led development & launch of multiple 0-1 products in a forward deployed capacity, working directly with global enterprise customers. I have also published AI research work using speech & computer vision models, with 400+ citations in international journals.</p>
+      </div>
+      <div class="profile-image-wrap">
+        <img src="profile.jpg" alt="Gaurav" />
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-chip" id="profileChipBtn" style="cursor:pointer;">
+    <span>Gaurav's Profile</span>
     <img src="profile.jpg" alt="Gaurav" id="profileImg" />
   </div>
 
   <div class="layout">
-    <!-- Left: intro -->
     <div class="left">
       <section class="intro">
-        <h1>Gaurav</h1>
+        <h1 id="profileHeading" style="cursor:pointer;">Gaurav</h1>
         <p>Product Manager & AI Researcher</p>
       </section>
+
+      <nav class="projects" id="projectList">
+
+        <!-- Project 1 — Play -->
+        <div class="project-entry">
+          <a class="project-item active" href="javascript:void(0)" data-id="0">
+            <span>Conversation Agents for Surveys</span>
+            <button class="badge" data-id="0">
+              Play
+              <svg viewBox="0 0 10 10" fill="currentColor"><polygon points="2,1 9,5 2,9"/></svg>
+            </button>
+          </a>
+          <div class="sub-items" id="sub-0">
+            <a class="sub-item" href="javascript:void(0)">
+              <svg class="sub-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <rect x="2" y="3" width="12" height="9" rx="1.5"/>
+                <path d="M5 7h6M5 9.5h4"/>
+              </svg>
+              Simulation
+            </a>
+            <a class="sub-item" href="javascript:void(0)">
+              <svg class="sub-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <circle cx="8" cy="8" r="5.5"/>
+                <path d="M8 5v3.5l2 1.5"/>
+              </svg>
+              Thinking
+            </a>
+          </div>
+        </div>
+
+        <!-- Project 2 — WIP -->
+        <div class="project-entry">
+          <a class="project-item" href="javascript:void(0)" data-id="1">
+            <span>Self Learning Agents</span>
+            <button class="badge wip" data-id="1" onclick="event.preventDefault(); event.stopPropagation();">
+              WIP
+            </button>
+          </a>
+        </div>
+
+      </nav>
     </div>
 
-    <!-- Right: demo area (empty for now) -->
     <div class="right"></div>
   </div>
 
-  <!-- Footer: theme toggle + links -->
+  <!-- Theme toggle + links — bottom right -->
   <footer class="footer">
+    <a href="mailto:gaurav.kataria.pm@gmail.com">Email</a>
+    <a href="https://x.com/10xkat" target="_blank" rel="noopener">Twitter</a>
     <div class="theme-toggle" role="group" aria-label="Theme">
       <button id="theme-system" aria-label="System theme" title="System">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -199,8 +471,6 @@
         </svg>
       </button>
     </div>
-    <a href="mailto:gaurav.kataria.pm@gmail.com">Email</a>
-    <a href="https://x.com/10xkat" target="_blank" rel="noopener">Twitter</a>
   </footer>
 
   <script>
@@ -215,17 +485,15 @@
       img.onload = () => {
         ctx.clearRect(0, 0, size, size);
         ctx.beginPath();
-        ctx.moveTo(radius, 0);
-        ctx.lineTo(size - radius, 0);
+        ctx.moveTo(radius, 0); ctx.lineTo(size-radius, 0);
         ctx.quadraticCurveTo(size, 0, size, radius);
-        ctx.lineTo(size, size - radius);
-        ctx.quadraticCurveTo(size, size, size - radius, size);
+        ctx.lineTo(size, size-radius);
+        ctx.quadraticCurveTo(size, size, size-radius, size);
         ctx.lineTo(radius, size);
-        ctx.quadraticCurveTo(0, size, 0, size - radius);
+        ctx.quadraticCurveTo(0, size, 0, size-radius);
         ctx.lineTo(0, radius);
         ctx.quadraticCurveTo(0, 0, radius, 0);
-        ctx.closePath();
-        ctx.clip();
+        ctx.closePath(); ctx.clip();
         ctx.drawImage(img, 0, 0, size, size);
         let link = document.querySelector("link[rel~='icon']");
         if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
@@ -235,9 +503,50 @@
     }
     window.addEventListener('load', () => setRoundedFavicon('profile.jpg'));
 
+    // ── Profile overlay ──
+    const overlay = document.getElementById('profileOverlay');
+    const openProfile = () => overlay.classList.add('open');
+    const closeProfile = () => overlay.classList.remove('open');
+
+    document.getElementById('profileChipBtn').addEventListener('click', openProfile);
+    document.getElementById('profileHeading').addEventListener('click', openProfile);
+    document.getElementById('profileBack').addEventListener('click', closeProfile);
+
+    // ── Hover selection ──
+    const items = document.querySelectorAll('.project-item');
+    items.forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        items.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+
+    // ── Play button — toggle sub-items + auto-select Simulation ──
+    document.querySelectorAll('.badge:not(.wip)').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        const sub = document.getElementById('sub-' + id);
+        if (!sub) return;
+        const isOpen = sub.classList.contains('open');
+        sub.classList.toggle('open');
+        btn.closest('.project-entry').classList.toggle('expanded', !isOpen);
+        if (!isOpen) {
+          sub.querySelectorAll('.sub-item').forEach(s => s.classList.remove('active'));
+          sub.querySelector('.sub-item')?.classList.add('active');
+        }
+      });
+    });
+
+    // Sub-items are no-op for now
+    document.querySelectorAll('.sub-item').forEach(item => {
+      item.addEventListener('click', e => e.preventDefault());
+    });
+
     // ── Theme toggle ──
     const root = document.documentElement;
-    const buttons = {
+    const themeButtons = {
       system: document.getElementById('theme-system'),
       light: document.getElementById('theme-light'),
       dark: document.getElementById('theme-dark'),
@@ -246,7 +555,7 @@
 
     function applyTheme(mode) {
       root.setAttribute('data-theme', mode === 'system' ? (mediaQuery.matches ? 'dark' : 'light') : mode);
-      Object.entries(buttons).forEach(([key, btn]) => btn.classList.toggle('active', key === mode));
+      Object.entries(themeButtons).forEach(([key, btn]) => btn.classList.toggle('active', key === mode));
       try { localStorage.setItem('theme', mode); } catch (e) {}
     }
 
@@ -260,9 +569,9 @@
       if (current === 'system') applyTheme('system');
     });
 
-    buttons.system.addEventListener('click', () => applyTheme('system'));
-    buttons.light.addEventListener('click', () => applyTheme('light'));
-    buttons.dark.addEventListener('click', () => applyTheme('dark'));
+    themeButtons.system.addEventListener('click', () => applyTheme('system'));
+    themeButtons.light.addEventListener('click', () => applyTheme('light'));
+    themeButtons.dark.addEventListener('click', () => applyTheme('dark'));
   </script>
 </body>
 </html>
